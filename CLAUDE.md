@@ -6,6 +6,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a **meta-configuration framework** that deploys to `~/.claude/` and affects ALL Claude Code sessions. Changes here have global impact.
 
+## Quick Reference
+
+### Most Used Commands
+```bash
+# Deploy framework
+./install.sh
+
+# MCP server management
+python3 mcp/install_mcp.py list                    # List available servers
+python3 mcp/install_mcp.py install context7        # Install specific server
+python3 mcp/install_mcp.py status                  # Check installation status
+
+# Test Notion wrapper
+cd mcp/notion && npm test
+
+# Check for secrets before commit
+grep -r "TOKEN\|KEY\|SECRET" --exclude-dir=node_modules
+```
+
 ## Common Commands
 
 ### Installation & Deployment
@@ -42,6 +61,28 @@ cd mcp/notion && npm install
 cd mcp/notion && npm test
 ```
 
+### Testing Commands
+```bash
+# Test Notion wrapper functionality
+cd mcp/notion && npm test
+
+# Validate all JSON configurations
+python3 -m json.tool core/settings.json
+for file in mcp/configs/*.json; do python3 -m json.tool "$file" > /dev/null && echo "✓ $file" || echo "✗ $file"; done
+
+# Test MCP server installation (dry run)
+python3 mcp/install_mcp.py status
+
+# Verify Notion wrapper setup
+cd mcp/notion && npm run test:setup
+
+# Check for exposed secrets
+grep -r "TOKEN\|KEY\|SECRET" --exclude-dir=node_modules --exclude-dir=.git
+
+# Validate environment variables
+env | grep -E "NOTION_TOKEN|TWENTYFIRST_API_KEY|MORPH_API_KEY|CONTEXT7_API_KEY" | sed 's/=.*/=***/'
+```
+
 ### Required Environment Variables
 ```bash
 # For Notion integration
@@ -52,6 +93,9 @@ export TWENTYFIRST_API_KEY='your-key'
 
 # For MorphLLM Fast Apply
 export MORPH_API_KEY='your-key'
+
+# For Context7 (optional, for higher rate limits)
+export CONTEXT7_API_KEY='your-key'
 ```
 
 ## Architecture
@@ -141,10 +185,86 @@ External API
 - **Zone Isolation**: Optional workspace filtering
 
 ### Adding New MCP Services
-1. Add server configuration to `mcp/mcp-servers.json`
-2. Optionally create wrapper directory: `mcp/{service-name}/`
-3. Add wrapper with rate limiting pattern from Notion example
-4. Test thoroughly before deployment using `install_mcp.py`
+
+#### Step-by-Step Guide
+1. **Create configuration file**: `mcp/configs/{service-name}.json`
+   ```json
+   {
+     "service-name": {
+       "command": "npx",
+       "args": ["@org/package@latest"],
+       "env": {}
+     }
+   }
+   ```
+
+2. **Add metadata** to `install_mcp.py`:
+   ```python
+   "service-name": {
+       "requires_api_key": True/False,
+       "api_key_env": "SERVICE_API_KEY",
+       "category": "category-name",
+       "description": "Service description"
+   }
+   ```
+
+3. **Create wrapper (if rate limiting needed)**:
+   ```bash
+   mkdir -p mcp/{service-name}/src
+   cp mcp/notion/src/notion-mcp-wrapper.js mcp/{service-name}/src/{service}-wrapper.js
+   # Modify wrapper for specific service
+   ```
+
+4. **Test the service**:
+   ```bash
+   # Install to Claude Code
+   python3 mcp/install_mcp.py install {service-name}
+   
+   # Verify in config
+   cat ~/.claude.json | jq '.mcpServers.{service-name}'
+   
+   # Test with environment variable
+   export SERVICE_API_KEY='test-key'
+   npx @org/package@latest
+   ```
+
+5. **Document the service**: Create `mcp/MCP_{ServiceName}.md`
+
+## Common Development Tasks
+
+### Debugging MCP Services
+```bash
+# Check if MCP server is properly configured
+cat ~/.claude.json | jq '.mcpServers'
+
+# Test MCP server directly
+export NOTION_TOKEN='your-token'
+npx @notionhq/notion-mcp-server
+
+# Check logs for wrapper services
+tail -f mcp/notion/logs/notion-mcp-*.log
+
+# Debug environment variables
+env | grep -E "_TOKEN|_KEY" | sed 's/=.*/=***/'
+```
+
+### Troubleshooting
+
+#### MCP Server Not Working
+1. Check if server is installed: `python3 mcp/install_mcp.py status`
+2. Verify environment variables are set
+3. Restart Claude Code after installation
+4. Check ~/.claude.json for proper configuration
+
+#### Notion Rate Limiting Issues
+- Wrapper enforces 100 ops/hour
+- Check logs: `tail -f mcp/notion/logs/notion-mcp-*.log`
+- Queue status visible in logs
+
+#### Installation Failures
+- Restore from backup: `cp -r ~/.claude.backup.{timestamp}/* ~/.claude/`
+- Check Python version: `python3 --version` (requires 3.6+)
+- Verify npm is installed: `npm --version`
 
 ## Testing Procedures
 
@@ -169,12 +289,14 @@ cp -r ~/.claude.backup.{timestamp}/* ~/.claude/
 - Make breaking changes without backward compatibility
 - Deploy untested MCP services
 - Include personal/work-specific data in this framework
+- Modify ~/.claude/ directly without using install.sh (creates backups)
 
 ✅ **ALWAYS**:
 - Test changes locally before deployment
 - Create timestamped backups
 - Keep framework project-agnostic
 - Document all configuration changes
+- Run `grep -r "TOKEN\|KEY\|SECRET"` before commits
 
 ## Important Notes
 
@@ -182,3 +304,5 @@ cp -r ~/.claude.backup.{timestamp}/* ~/.claude/
 - Path changes require updates in all dependent projects
 - MCP services run with Node.js CommonJS modules
 - Settings.json controls tool permissions globally
+- All MCP servers are optional - core functionality works without them
+- Restart Claude Code after installing/removing MCP servers
