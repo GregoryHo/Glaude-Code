@@ -21,7 +21,7 @@
     ],
     "deny": [
       "Bash(sudo rm -rf /*)",
-      "Bash(:(){ :|:& };:)",
+      "Bash(:*{ :|:*)",
       "Bash(dd if=/dev/*)"
     ],
     "ask": [
