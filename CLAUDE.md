@@ -18,17 +18,40 @@ cp core/CLAUDE.md ~/.claude/
 cp core/settings.json ~/.claude/
 ```
 
-### MCP Services
+### MCP Services Management
 ```bash
-# Install Notion MCP dependencies
+# List all available MCP servers
+python3 mcp/install_mcp.py list
+
+# Install all MCP servers to Claude Code
+python3 mcp/install_mcp.py install
+
+# Install specific servers
+python3 mcp/install_mcp.py install notion serena magic
+
+# Remove servers
+python3 mcp/install_mcp.py remove magic
+
+# Check installation status
+python3 mcp/install_mcp.py status
+
+# Install Notion MCP dependencies (for wrapper)
 cd mcp/notion && npm install
 
 # Test Notion wrapper
 cd mcp/notion && npm test
+```
 
-# Run Notion wrapper (requires NOTION_TOKEN env)
+### Required Environment Variables
+```bash
+# For Notion integration
 export NOTION_TOKEN='your-token'
-node mcp/notion/src/notion-mcp-wrapper.js
+
+# For Magic UI generation
+export TWENTYFIRST_API_KEY='your-key'
+
+# For MorphLLM Fast Apply
+export MORPH_API_KEY='your-key'
 ```
 
 ## Architecture
@@ -59,17 +82,57 @@ External API
 
 ```
 .
-├── core/           # Files deployed to ~/.claude/
-│   ├── CLAUDE.md   # Global instructions
-│   └── settings.json # Permission & behavior settings
-├── mcp/            # MCP service wrappers
-│   └── notion/     # Rate-limited Notion wrapper (100 ops/hour)
-├── agents/         # Custom AI agent definitions
-├── templates/      # Reusable workflow templates
-└── install.sh      # Deployment script
+├── core/                # Files deployed to ~/.claude/
+│   ├── CLAUDE.md        # Global instructions
+│   └── settings.json    # Permission & behavior settings
+├── mcp/                 # MCP service configurations and wrappers
+│   ├── configs/         # Individual JSON config files per server
+│   ├── MCP_*.md         # Documentation for each MCP server
+│   ├── install_mcp.py   # MCP installation manager
+│   └── notion/          # Rate-limited Notion wrapper (100 ops/hour)
+├── agents/              # Custom AI agent definitions
+├── templates/           # Reusable workflow templates
+└── install.sh           # Main deployment script
 ```
 
 ## Working with MCP Services
+
+### Available MCP Servers
+
+#### 🔸 **context7** - Documentation & Examples
+- Official library documentation and code examples
+- No API key required
+- Command: `npx -y @upstash/context7-mcp@latest`
+
+#### 🔸 **sequential-thinking** - Problem Solving
+- Multi-step problem solving and systematic analysis
+- No API key required
+- Command: `npx -y @modelcontextprotocol/server-sequential-thinking`
+
+#### 🔸 **magic** - UI Generation
+- Modern UI component generation and design systems
+- Requires: `TWENTYFIRST_API_KEY`
+- Command: `npx @21st-dev/magic`
+
+#### 🔸 **playwright** - Browser Testing
+- Cross-browser E2E testing and automation
+- No API key required
+- Command: `npx @playwright/mcp@latest`
+
+#### 🔸 **serena** - Code Analysis
+- Semantic code analysis and intelligent editing
+- No API key required
+- Command: `uvx --from git+https://github.com/oraios/serena serena start-mcp-server`
+
+#### 🔸 **morphllm-fast-apply** - Code Modification
+- Fast Apply capability for context-aware code modifications
+- Requires: `MORPH_API_KEY`
+- Command: `npx @morph-llm/morph-fast-apply`
+
+#### 🔸 **notion** - Productivity Integration
+- Rate-limited Notion integration (100 ops/hour)
+- Requires: `NOTION_TOKEN`
+- Custom wrapper with rate limiting and logging
 
 ### Notion Wrapper Features
 - **Rate Limiting**: 100 operations/hour with automatic queuing
@@ -78,10 +141,10 @@ External API
 - **Zone Isolation**: Optional workspace filtering
 
 ### Adding New MCP Services
-1. Create directory: `mcp/{service-name}/`
-2. Add wrapper with rate limiting pattern from Notion example
-3. Update `install.sh` to reference new service
-4. Test thoroughly before deployment
+1. Add server configuration to `mcp/mcp-servers.json`
+2. Optionally create wrapper directory: `mcp/{service-name}/`
+3. Add wrapper with rate limiting pattern from Notion example
+4. Test thoroughly before deployment using `install_mcp.py`
 
 ## Testing Procedures
 

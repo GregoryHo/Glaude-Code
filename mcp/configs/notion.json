@@ -1,0 +1,11 @@
+{
+  "notion": {
+    "command": "node",
+    "args": [
+      "${HOME}/GitHub/AI/Glaude-Code/mcp/notion/src/notion-mcp-wrapper.js"
+    ],
+    "env": {
+      "NOTION_TOKEN": "${NOTION_TOKEN}"
+    }
+  }
+}
