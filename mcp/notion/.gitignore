@@ -1,0 +1,16 @@
+# Logs should be in project directory, not in framework
+logs/
+.notion-logs/
+*.log
+*.jsonl
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+
+# Test output
+test-results/
+coverage/
