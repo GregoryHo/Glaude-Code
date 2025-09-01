@@ -25,6 +25,20 @@ cd mcp/notion && npm test
 grep -r "TOKEN\|KEY\|SECRET" --exclude-dir=node_modules
 ```
 
+### 🏭 Agent Factory - Pydantic AI Agent Builder
+```bash
+# To build AI agents using the Agent Factory framework:
+cd ~/GitHub/AI/context-engineering-intro/use-cases/agent-factory-with-subagents
+
+# Then open Claude Code in that directory and use trigger phrases:
+# - "Build an AI agent that..."
+# - "Create a Pydantic AI agent for..."
+# - "I need an AI assistant that can..."
+
+# Quick access via symlink (if created):
+cd ~/GitHub/AI/Glaude-Code/agents/agent-factory
+```
+
 ## Common Commands
 
 ### Installation & Deployment
