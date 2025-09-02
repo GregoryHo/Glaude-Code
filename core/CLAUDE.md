@@ -1,3 +1,12 @@
+# CRITICAL: Archon-First Task Management
+
+When ANY task management scenario arises:
+1. **Use Archon MCP server as PRIMARY task system** - Check and update Archon tasks first
+2. **TodoWrite is ONLY for granular subtask tracking** - Use after Archon setup for personal tracking
+3. **This overrides all other task management patterns** - No exceptions
+
+**VIOLATION CHECK**: If you used TodoWrite before checking Archon, restart with Archon first.
+
 # Development Guidelines
 
 ## Philosophy
@@ -28,19 +37,33 @@ Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
 **Success Criteria**: [Testable outcomes]
 **Tests**: [Specific test cases]
 **Status**: [Not Started|In Progress|Complete]
+**Archon Task ID**: [task-uuid if using Archon]
 ```
+- Create corresponding Archon tasks for each stage when available
 - Update status as you progress
 - Remove file when all stages are done
 
 ### 2. Implementation Flow
 
-1. **Understand** - Study existing patterns in codebase
-2. **Test** - Write test first (red)
-3. **Implement** - Minimal code to pass (green)
-4. **Refactor** - Clean up with tests passing
-5. **Commit** - With clear message linking to plan
+1. **Check Task** - If Archon available: `get_task(task_id)` → `update_task(status="doing")`
+2. **Research** - Use Archon RAG when available: `perform_rag_query()` + `search_code_examples()`
+3. **Understand** - Study existing patterns in codebase
+4. **Test** - Write test first (red)
+5. **Implement** - Minimal code to pass (green), based on research findings
+6. **Refactor** - Clean up with tests passing
+7. **Update Status** - If Archon: `update_task(status="review")` when complete
+8. **Commit** - With clear message linking to plan and task ID
 
-### 3. When Stuck (After 3 Attempts)
+### 3. Archon Research Integration
+
+When Archon MCP is available, research before implementing:
+
+- **Architecture & Patterns**: `perform_rag_query("[tech] patterns", match_count=5)`
+- **Implementation Examples**: `search_code_examples("[feature] implementation", match_count=3)`
+- **Debugging & Issues**: `perform_rag_query("[error message]", match_count=3)`
+- Keep queries focused with low match_count (3-5) for relevant results
+
+### 4. When Stuck (After 3 Attempts)
 
 **CRITICAL**: Maximum 3 attempts per issue, then STOP.
 
