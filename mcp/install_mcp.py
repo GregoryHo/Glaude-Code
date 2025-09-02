@@ -87,6 +87,13 @@ class MCPInstaller:
                     "category": "productivity",
                     "description": "Rate-limited Notion integration (100 ops/hour)",
                     "rate_limit": "100 operations/hour"
+                },
+                "archon": {
+                    "requires_api_key": False,
+                    "category": "knowledge-management",
+                    "description": "AI-powered knowledge base and task management platform",
+                    "requires_docker": True,
+                    "note": "Requires Docker running with Archon services (docker compose up)"
                 }
             }
         }
@@ -139,6 +146,7 @@ class MCPInstaller:
             "testing": [],
             "ui-generation": [],
             "productivity": [],
+            "knowledge-management": [],
             "other": []
         }
         
