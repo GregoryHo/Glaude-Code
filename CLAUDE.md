@@ -95,7 +95,50 @@ grep -r "TOKEN\|KEY\|SECRET" --exclude-dir=node_modules --exclude-dir=.git
 
 # Validate environment variables
 env | grep -E "NOTION_TOKEN|TWENTYFIRST_API_KEY|MORPH_API_KEY|CONTEXT7_API_KEY" | sed 's/=.*/=***/'
+
+# Install browser testing MCP servers
+python3 mcp/install_mcp.py install playwright selenium
+
+# Install Playwright browsers
+npx playwright install
+
+# Verify browser drivers for Selenium
+chromedriver --version
+geckodriver --version
 ```
+
+### Browser Testing Workflow
+
+#### Using Playwright MCP
+```bash
+# Install Playwright MCP
+python3 mcp/install_mcp.py install playwright
+
+# Trigger with testing phrases:
+# "test the login flow"
+# "check if form validation works"
+# "take screenshots of responsive design"
+# "test across Chrome, Firefox, and Safari"
+```
+
+#### Using Selenium MCP
+```bash
+# Install Selenium MCP
+python3 mcp/install_mcp.py install selenium
+
+# Ensure browser drivers are installed
+npm install -g chromedriver
+# Or download from https://chromedriver.chromium.org/
+
+# Trigger with legacy testing needs:
+# "test with Selenium WebDriver"
+# "run tests on Selenium Grid"
+# "use WebDriver protocol for testing"
+```
+
+#### Choosing Between Testing Servers
+- **Playwright**: Modern apps, cross-browser testing, auto-wait features
+- **Selenium**: Legacy systems, enterprise environments, WebDriver compliance
 
 ### Required Environment Variables
 ```bash
@@ -173,9 +216,14 @@ External API
 - Command: `npx @21st-dev/magic`
 
 #### 🔸 **playwright** - Browser Testing
-- Cross-browser E2E testing and automation
+- Cross-browser E2E testing and automation (Chrome, Firefox, Safari)
 - No API key required
 - Command: `npx @playwright/mcp@latest`
+
+#### 🔸 **selenium** - WebDriver Testing
+- Industry-standard browser automation with Selenium WebDriver
+- No API key required (requires browser drivers)
+- Command: `npx @modelcontextprotocol/server-selenium`
 
 #### 🔸 **serena** - Code Analysis
 - Semantic code analysis and intelligent editing

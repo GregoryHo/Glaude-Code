@@ -94,6 +94,12 @@ class MCPInstaller:
                     "description": "AI-powered knowledge base and task management platform",
                     "requires_docker": True,
                     "note": "Requires Docker running with Archon services (docker compose up)"
+                },
+                "selenium": {
+                    "requires_api_key": False,
+                    "category": "testing",
+                    "description": "Cross-browser web automation with Selenium WebDriver",
+                    "note": "Requires browser drivers (ChromeDriver, GeckoDriver, etc.)"
                 }
             }
         }

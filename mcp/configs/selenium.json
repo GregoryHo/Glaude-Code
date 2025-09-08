@@ -1,0 +1,6 @@
+{
+  "selenium": {
+    "command": "npx",
+    "args": ["@modelcontextprotocol/server-selenium"]
+  }
+}
