@@ -225,6 +225,11 @@ External API
 - No API key required (requires browser drivers)
 - Command: `npx @modelcontextprotocol/server-selenium`
 
+#### 🔸 **chrome-devtools** - Browser Debugging
+- Official Chrome DevTools Protocol for debugging and performance analysis
+- No API key required (requires Node.js 22+ and Chrome)
+- Command: `npx chrome-devtools-mcp@latest`
+
 #### 🔸 **serena** - Code Analysis
 - Semantic code analysis and intelligent editing
 - No API key required
@@ -291,6 +296,45 @@ External API
    ```
 
 5. **Document the service**: Create `mcp/MCP_{ServiceName}.md`
+
+## Third-Party Integrations
+
+Non-MCP integrations for external tools. See `integrations/` directory.
+
+### 📝 Obsidian Integration
+File-based knowledge management without MCP server.
+- **Location**: `integrations/obsidian/`
+- **Method**: Direct file access + Obsidian URI scheme
+- **Setup**: Set `OBSIDIAN_VAULT_PATH` and `OBSIDIAN_VAULT_NAME`
+- **Documentation**: [integrations/obsidian/README.md](integrations/obsidian/README.md)
+
+**Quick Example**:
+```bash
+# Search vault
+Grep "TODO" --path ${OBSIDIAN_VAULT_PATH}
+
+# Open note
+open "obsidian://open?vault=${OBSIDIAN_VAULT_NAME}&file=note.md"
+```
+
+### 🎨 Excalidraw Integration
+Hand-drawn diagram generation using two approaches.
+- **Location**: `integrations/excalidraw/`
+- **Method 1**: Mermaid → Excalidraw (official tool for flowcharts)
+- **Method 2**: Direct JSON generation (for architecture/mind maps/UML)
+- **Documentation**: [integrations/excalidraw/README.md](integrations/excalidraw/README.md)
+
+**Quick Example**:
+```bash
+# Install dependencies
+cd integrations/excalidraw && npm install
+
+# Convert Mermaid to Excalidraw
+node mermaid-to-excalidraw.js flowchart.mmd flowchart.excalidraw
+
+# Use template for architecture diagram
+cp integrations/excalidraw/templates/architecture.json my-arch.excalidraw
+```
 
 ## Common Development Tasks
 

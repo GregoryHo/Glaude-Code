@@ -100,6 +100,12 @@ class MCPInstaller:
                     "category": "testing",
                     "description": "Cross-browser web automation with Selenium WebDriver",
                     "note": "Requires browser drivers (ChromeDriver, GeckoDriver, etc.)"
+                },
+                "chrome-devtools": {
+                    "requires_api_key": False,
+                    "category": "browser-automation",
+                    "description": "Official Chrome DevTools Protocol for browser debugging and performance analysis",
+                    "note": "Requires Node.js 22+ and Chrome browser"
                 }
             }
         }
@@ -150,6 +156,7 @@ class MCPInstaller:
             "code-analysis": [],
             "code-modification": [],
             "testing": [],
+            "browser-automation": [],
             "ui-generation": [],
             "productivity": [],
             "knowledge-management": [],

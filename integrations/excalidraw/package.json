@@ -1,0 +1,23 @@
+{
+  "name": "glaude-code-excalidraw-tools",
+  "version": "1.0.0",
+  "description": "Excalidraw integration tools for Glaude-Code framework",
+  "private": true,
+  "scripts": {
+    "convert": "node mermaid-to-excalidraw.js"
+  },
+  "dependencies": {
+    "@excalidraw/mermaid-to-excalidraw": "^1.1.3"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "keywords": [
+    "excalidraw",
+    "mermaid",
+    "diagrams",
+    "claude-code"
+  ],
+  "author": "Glaude-Code",
+  "license": "MIT"
+}
