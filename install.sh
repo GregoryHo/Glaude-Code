@@ -69,7 +69,7 @@ cat > ~/.claude/mcp-config.json << EOF
   "services": {
     "notion-safe": {
       "description": "Notion API with rate limiting",
-      "path": "$(pwd)/mcp/notion/src/notion-mcp-wrapper.js"
+      "path": "$(pwd)/mcp/notion-safe/src/notion-mcp-wrapper.js"
     }
   },
   "global_mcps": [

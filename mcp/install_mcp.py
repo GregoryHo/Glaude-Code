@@ -85,8 +85,15 @@ class MCPInstaller:
                     "requires_api_key": True,
                     "api_key_env": "NOTION_TOKEN",
                     "category": "productivity",
-                    "description": "Rate-limited Notion integration (100 ops/hour)",
-                    "rate_limit": "100 operations/hour"
+                    "description": "Official Notion integration for task management and knowledge base"
+                },
+                "notion-safe": {
+                    "requires_api_key": True,
+                    "api_key_env": "NOTION_TOKEN",
+                    "category": "productivity",
+                    "description": "Enterprise-grade Notion wrapper with rate limiting and audit logging",
+                    "rate_limit": "100 operations/hour (configurable)",
+                    "note": "Provides safety features for production AI automation"
                 },
                 "archon": {
                     "requires_api_key": False,

@@ -1,8 +1,9 @@
 {
   "notion": {
-    "command": "node",
+    "command": "npx",
     "args": [
-      "${HOME}/GitHub/AI/Glaude-Code/mcp/notion/src/notion-mcp-wrapper.js"
+      "-y",
+      "@notionhq/notion-mcp-server"
     ],
     "env": {
       "NOTION_TOKEN": "${NOTION_TOKEN}"

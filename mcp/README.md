@@ -55,7 +55,8 @@ python3 install_mcp.py remove magic
 - **morphllm-fast-apply** 🔑 - Context-aware code modifications (needs MORPH_API_KEY)
 
 ### 📝 Productivity
-- **notion** 🔑 - Notion integration with rate limiting (needs NOTION_TOKEN)
+- **notion** 🔑 - Official Notion integration (needs NOTION_TOKEN)
+- **notion-safe** 🔑 - Notion wrapper with rate limiting and audit logging (needs NOTION_TOKEN)
 
 **Legend:** ✓ = No API key needed, 🔑 = API key required
 
@@ -87,10 +88,11 @@ mcp/
 │   ├── playwright.json
 │   ├── serena.json
 │   ├── morphllm.json
-│   └── notion.json
+│   ├── notion.json
+│   └── notion-safe.json
 ├── MCP_*.md            # Detailed documentation for each server
 ├── install_mcp.py      # Installation and management script
-└── notion/             # Custom Notion wrapper with rate limiting
+└── notion-safe/        # Custom Notion wrapper with rate limiting
 ```
 
 ## Documentation
@@ -126,7 +128,7 @@ export MORPH_API_KEY='your-morph-key'
 
 - **Server not appearing**: Restart Claude Code after installation
 - **API errors**: Check environment variables are set correctly
-- **Rate limits**: Notion wrapper limits to 100 ops/hour automatically
+- **Rate limits**: The `notion-safe` wrapper limits to 100 ops/hour automatically (plain `notion` has no limit)
 
 ## Backups
 
