@@ -36,13 +36,23 @@ class MCPInstaller:
                 with open(config_file, 'r') as f:
                     config = json.load(f)
                     # Each config file contains a single server configuration
-                    mcp_servers.update(config)
+                    mcp_servers.update(self._expand_placeholders(config))
             except json.JSONDecodeError as e:
                 print(f"⚠️  Error reading {config_file.name}: {e}")
                 continue
-        
+
         return {"mcpServers": mcp_servers}
-    
+
+    def _expand_placeholders(self, value: Any) -> Any:
+        """Expand ${GLAUDE_ROOT} to this checkout's path so configs stay portable"""
+        if isinstance(value, dict):
+            return {k: self._expand_placeholders(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [self._expand_placeholders(v) for v in value]
+        if isinstance(value, str):
+            return value.replace("${GLAUDE_ROOT}", str(self.project_root))
+        return value
+
     def _load_metadata(self) -> Dict:
         """Load metadata for MCP servers"""
         # Define metadata for each server

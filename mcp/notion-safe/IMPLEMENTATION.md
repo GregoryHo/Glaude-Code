@@ -118,7 +118,7 @@ LOG_TO_FILE=true             # 記錄操作日誌
 ## 📦 檔案結構說明
 
 ```
-mcp/notion/
+mcp/notion-safe/
 ├── src/
 │   ├── notion-mcp-wrapper.js    # 核心 Wrapper
 │   ├── safe-wrapper.js          # (已廢棄) 原本的完整替代方案
@@ -156,7 +156,7 @@ echo $NOTION_TOKEN
 
 ```bash
 # 設定執行權限
-cd mcp/notion
+cd mcp/notion-safe
 chmod +x src/notion-mcp-wrapper.js
 
 # 建立環境設定檔（選擇性，wrapper 會自動讀取）
@@ -182,7 +182,8 @@ claude mcp add notion /usr/local/bin/notion-mcp-server \
 
 #### 配置安全 Wrapper（大量操作時使用）
 ```bash
-claude mcp add notion-safe "/Users/gregho/Workspace/Personal/mcp/notion/src/notion-mcp-wrapper.js" \
+# 從 repo 根目錄執行
+claude mcp add notion-safe "$(pwd)/mcp/notion-safe/src/notion-mcp-wrapper.js" \
   --scope user \
   -e NOTION_TOKEN=$NOTION_TOKEN \
   -e MAX_OPERATIONS_PER_HOUR=100 \

@@ -4,12 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Critical Context
 
-This is a **meta-configuration framework** for developing and managing Claude Code tools. It:
-- Deploys to `~/.claude/` and affects ALL Claude Code sessions
-- Changes here have **global impact** across all projects
+This repository holds a personal `~/.claude/` configuration, kept public
+so it can be reused. It:
+- Deploys to `~/.claude/` via `install.sh` and affects ALL Claude Code sessions
+- Is normally edited the other way round: change `~/.claude/` first, then
+  pull the change back into `core/`
 - Serves as a **development workspace** for MCP servers, integrations, and agents
 
-**Your Role**: Help develop, test, and maintain this tool library - NOT to use these tools for end-user tasks.
+**Your Role**: Maintain this configuration and its tooling. Opinionated
+defaults are fine; machine-specific ones are not.
 
 ---
 
@@ -48,19 +51,14 @@ grep -r "TOKEN|KEY|SECRET" --exclude-dir=node_modules --exclude-dir=.git
 ### 3. Key Principles
 - **Test before deploying** - Changes affect global Claude Code behavior
 - **Document everything** - Update README.md and MCP_*.md files
-- **Keep it agnostic** - No personal/work-specific data
+- **Stay portable** - Opinionated defaults belong here; secrets, machine paths,
+  and work-specific data do not (see Portability Test)
 - **Security first** - Never commit secrets
 
 ---
 
-## Architecture
+## Understanding MCP Wrappers
 
-### Configuration Hierarchy
-1. **Global Level**: `~/.claude/CLAUDE.md` - Applies to all projects
-2. **Project Level**: `{project}/CLAUDE.md` - Project-specific overrides
-3. **Session Context**: Runtime configurations and MCP states
-
-### MCP Wrapper Pattern
 ```
 Claude Code
     ↓
@@ -71,52 +69,6 @@ Official MCP Server
 External API
 ```
 
-**When to Use Wrappers**:
-- Rate limiting required (e.g., Notion API has limits)
-- Audit logging needed (enterprise/compliance)
-- Safety checks for write operations
-- Batch processing for large operations
-
-### Deployment Flow
-1. Source files in `Glaude-Code/core/`
-2. `install.sh` creates timestamped backup of `~/.claude/`
-3. Deploys `core/CLAUDE.md` and `core/settings.json` to `~/.claude/`
-4. Active in all new Claude Code sessions
-
----
-
-## Directory Structure
-
-```
-.
-├── core/                # Files deployed to ~/.claude/
-│   ├── CLAUDE.md        # Global instructions (this gets deployed)
-│   └── settings.json    # Permission & behavior settings
-├── mcp/                 # MCP service configurations and wrappers
-│   ├── configs/         # Individual JSON config files per server
-│   ├── MCP_*.md         # Documentation for each MCP server
-│   ├── install_mcp.py   # MCP installation manager
-│   └── {service}/       # Custom wrappers (e.g., notion-safe/)
-├── integrations/        # Non-MCP third-party integrations
-│   ├── obsidian/        # File-based knowledge management
-│   └── excalidraw/      # Diagram generation
-├── agents/              # Custom AI agent definitions
-├── templates/           # Reusable workflow templates
-├── install.sh           # Main deployment script
-└── README.md            # User-facing documentation
-```
-
-### Responsibility Separation
-- **CLAUDE.md** (this file) → Development guidance for AI
-- **README.md** → End-user installation and usage guide
-- **mcp/README.md** → MCP services usage documentation
-- **integrations/README.md** → Third-party integrations guide
-- **mcp/MCP_*.md** → Individual service documentation
-
----
-
-## Understanding MCP Wrappers
-
 ### When to Create a Wrapper
 Create a custom wrapper when:
 1. **Rate Limiting**: API has strict rate limits (e.g., Notion: 3 req/sec)
@@ -124,38 +76,6 @@ Create a custom wrapper when:
 3. **Safety Checks**: Prevent destructive operations in production
 4. **Batch Processing**: Split large operations automatically
 5. **State Management**: Need to maintain session state between calls
-
-### Wrapper Architecture
-```javascript
-// mcp/{service}/src/{service}-wrapper.js
-const { spawn } = require('child_process');
-
-// 1. Rate limiter
-const rateLimiter = new RateLimiter({
-  maxOps: 100,
-  windowMs: 3600000
-});
-
-// 2. Logger
-const logger = createLogger({
-  logDir: '~/.{service}-logs',
-  format: 'jsonl'
-});
-
-// 3. Safety validator
-function validateOperation(operation, args) {
-  if (operation.type === 'delete') {
-    return { safe: false, reason: 'Destructive operation' };
-  }
-  return { safe: true };
-}
-
-// 4. Spawn official MCP server
-const mcp = spawn('npx', ['@official/mcp-server']);
-
-// 5. Intercept and wrap requests
-mcp.stdin.write(JSON.stringify(wrappedRequest));
-```
 
 ### Example: notion-safe Wrapper
 See `mcp/notion-safe/` for a complete implementation with:
@@ -187,6 +107,10 @@ cat > mcp/configs/{service-name}.json << 'EOF'
 }
 EOF
 ```
+
+Paths that point back into this repository must use the `${GLAUDE_ROOT}`
+placeholder, which `install_mcp.py` expands to the checkout location. Never
+hardcode an absolute path.
 
 #### 2. Update install_mcp.py Metadata
 ```python
@@ -289,106 +213,32 @@ See `integrations/README.md` for full integration guide.
 
 ---
 
-## Common Development Tasks
-
-### Debugging MCP Services
-
-```bash
-# Check if MCP server is properly configured
-cat ~/.claude.json | jq '.mcpServers'
-
-# Test MCP server directly (bypass Claude Code)
-export NOTION_TOKEN='your-token'
-npx @notionhq/notion-mcp-server
-
-# Check wrapper logs (if using wrapper)
-tail -f ~/.notion-logs/operations-$(date +%Y-%m-%d).jsonl
-
-# Debug environment variables (safely)
-env | grep -E "_TOKEN|_KEY" | sed 's/=.*/=***/'
-```
-
-### Troubleshooting
-
-#### MCP Server Not Working
-1. Check if server is installed: `python3 mcp/install_mcp.py status`
-2. Verify environment variables are set correctly
-3. Restart Claude Code after installation
-4. Check `~/.claude.json` for proper configuration
-5. Test server directly outside of Claude Code
-
-#### Wrapper Issues
-- Check wrapper logs for errors
-- Verify rate limits aren't exceeded
-- Ensure wrapper dependencies are installed (`npm install`)
-- Test official MCP server first (bypass wrapper)
-
-#### Installation Failures
-- Restore from backup: `cp -r ~/.claude.backup.{timestamp}/* ~/.claude/`
-- Check Python version: `python3 --version` (requires 3.6+)
-- Verify npm is installed: `npm --version`
-- Check permissions on `~/.claude/` directory
-
----
-
-## Testing Procedures
-
-### Before Deployment Checklist
-- [ ] Test MCP services locally: `cd mcp/{service} && npm test`
-- [ ] Validate all JSON configs: `python3 -m json.tool core/settings.json`
-- [ ] Check for exposed secrets: `grep -r "TOKEN|KEY|SECRET" --exclude-dir=node_modules --exclude-dir=.git`
-- [ ] Test install_mcp.py changes: `python3 mcp/install_mcp.py list`
-- [ ] Verify documentation is updated
-
-### Rollback Procedure
-```bash
-# List available backups
-ls -la ~/.claude.backup.*
-
-# Restore from specific backup
-cp -r ~/.claude.backup.20241023_143022/* ~/.claude/
-
-# Restart Claude Code to apply
-```
-
-### Testing New Features
-```bash
-# 1. Test in isolation (don't deploy)
-cd mcp/{service-name}
-npm test
-
-# 2. Test with real MCP server
-export SERVICE_API_KEY='test-key'
-npx @org/package@latest
-
-# 3. Test installation script
-python3 mcp/install_mcp.py install {service-name} --dry-run
-
-# 4. Deploy to test environment first
-./install.sh
-# Test in Claude Code with non-critical project
-
-# 5. If successful, deploy to production
-git commit -m "Add {service-name} MCP server"
-git push
-```
-
----
-
 ## Critical Warnings
+
+### Portability Test
+This repository is public. Before committing, sort the change into one of three tiers:
+
+1. **Breaks or leaks for other people** - secrets, absolute machine paths,
+   work-specific data. Never commit these.
+2. **Opinionated but harmless** - editor mode, theme, output style, plugin list,
+   hooks. Commit freely, but `install.sh` must never force them onto anyone.
+3. **Opinionated and the whole point** - permission deny lists, the MCP wrapper
+   pattern, `core/rules/`. This is what the repository exists to share.
+
+Only tier 1 is banned. Being opinionated is not a defect — neutrality belongs in
+the deployment mechanism, not in the content.
 
 ### ⚠️ NEVER
 - Commit API keys, tokens, or secrets to this repository
+- Commit absolute machine paths or work-specific data (tier 1 above)
 - Make breaking changes without backward compatibility
 - Deploy untested MCP services to production
-- Include personal/work-specific data in this framework
-- Modify `~/.claude/` directly (always use `install.sh` for backups)
+- Let `core/` drift from `~/.claude/` — sync changes back after editing the live config
 - Push changes without running security checks
 
 ### ✅ ALWAYS
 - Test changes locally before deployment
-- Create timestamped backups (automatic with `install.sh`)
-- Keep framework project-agnostic (works for anyone)
+- Keep `core/` in sync with `~/.claude/` (edit the live config first, then pull it back)
 - Document all configuration changes
 - Run `grep -r "TOKEN|KEY|SECRET"` before commits
 - Update README.md when adding new features
@@ -433,9 +283,9 @@ git diff --staged
 - Monitor rate limits and adjust wrappers as needed
 - Keep documentation in sync with code changes
 
-### User Guidance
-For end-users wanting to use this framework, direct them to:
+### Documentation Map
+- **CLAUDE.md** (this file) - Guidance for Claude Code working in this repository
 - **README.md** - Installation and quick start
 - **mcp/README.md** - MCP services usage guide
-- **integrations/README.md** - Third-party integrations
-- **mcp/MCP_*.md** - Specific service documentation
+- **integrations/README.md** - Third-party integrations guide
+- **mcp/MCP_*.md** - Individual service documentation

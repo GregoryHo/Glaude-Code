@@ -1,39 +1,156 @@
 {
-  "includeCoAuthoredBy": false,
-  "statusLine": {
-    "type": "command",
-    "command": "bash ~/.claude/statusline.sh"
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_NO_FLICKER": "1"
   },
+  "includeCoAuthoredBy": false,
   "permissions": {
-    "defaultMode": "plan",
     "allow": [
       "Read",
-      "Write", 
+      "Write",
       "Edit",
-      "MultiEdit",
       "Glob",
       "Grep",
-      "LS",
       "Bash",
       "WebFetch",
-      "WebSearch",
-      "TodoWrite"
+      "WebSearch"
     ],
     "deny": [
       "Bash(sudo rm -rf /*)",
       "Bash(:*:|:*)",
-      "Bash(dd if=/dev/*)"
-    ],
-    "ask": [
-      "KillBash",
-      "Bash(rm:*)",
-      "Bash(rm -rf:*)",
+      "Bash(dd if=/dev/*)",
       "Bash(sudo:*)",
-      "Bash(chmod:*)",
       "Bash(git push --force:*)",
       "Bash(git reset --hard:*)",
       "Bash(ssh:*)",
       "Bash(scp:*)"
+    ],
+    "defaultMode": "auto"
+  },
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"Notification\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"SessionEnd\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"SessionStart\",\"session_id\":\"%s\",\"ts\":\"%s\",\"tmux_pane\":\"%s\",\"terminal\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" \"$(printf '%s' \"${TMUX_PANE:-}\" | tr -d '[:cntrl:]\"\\\\')\" \"$(printf '%s' \"${TERM_PROGRAM:-$TERM}\" | tr -d '[:cntrl:]\"\\\\')\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"Stop\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"SubagentStart\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"SubagentStop\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "TaskCompleted": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"TaskCompleted\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
     ]
-  }
+  },
+  "worktree": {
+    "baseRef": "fresh"
+  },
+  "enabledPlugins": {
+    "arcforge@arcforge-dev": false,
+    "commit-commands@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "gopls-lsp@claude-plugins-official": false,
+    "kotlin-lsp@claude-plugins-official": false,
+    "mgrep@Mixedbread-Grep": true,
+    "pyright-lsp@claude-plugins-official": false,
+    "rust-analyzer-lsp@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": true,
+    "swift-lsp@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": true,
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "obsidian-skills": {
+      "source": {
+        "source": "github",
+        "repo": "kepano/obsidian-skills"
+      }
+    },
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "ui-ux-pro-max-skill": {
+      "source": {
+        "source": "github",
+        "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    }
+  },
+  "effortLevel": "xhigh",
+  "outputStyle": "ADHD",
+  "advisorModel": "opus",
+  "tui": "fullscreen",
+  "autoMemoryEnabled": false,
+  "autoDreamEnabled": false,
+  "skipDangerousModePermissionPrompt": true,
+  "skipWorkflowUsageWarning": true,
+  "theme": "dark",
+  "editorMode": "vim",
+  "todoFeatureEnabled": false,
+  "teammateMode": "auto",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
+  "useAutoModeDuringPlan": true,
+  "voiceEnabled": true
 }

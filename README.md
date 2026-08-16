@@ -17,9 +17,11 @@ This framework provides a structured approach to:
 
 ```
 Glaude-Code/
-├── core/                 # Core configuration files
+├── core/                 # Files deployed to ~/.claude/
 │   ├── CLAUDE.md        # Global Claude instructions
-│   └── settings.json    # Claude settings
+│   ├── settings.json    # Claude settings
+│   ├── rules/           # Always-loaded rule files
+│   └── output-styles/   # Output style definitions
 ├── mcp/                 # MCP service configurations
 │   ├── configs/         # Individual JSON config files
 │   ├── MCP_*.md         # Documentation for each service
@@ -48,8 +50,11 @@ cd Glaude-Code
 ```
 
 This will:
-- Create timestamped backup of existing `~/.claude/` configuration
-- Deploy `core/CLAUDE.md` and `core/settings.json` to `~/.claude/`
+- Deploy `core/CLAUDE.md`, `core/settings.json`, `core/rules/` and
+  `core/output-styles/` to `~/.claude/`
+- Show a diff and ask before overwriting any file you already have —
+  nothing is replaced silently, so your own settings survive by default
+- Back up only the files it actually replaces, to `~/.claude.backup.{timestamp}/`
 - Make configurations active for all Claude Code sessions
 
 ### 2. Install MCP Services
@@ -283,9 +288,14 @@ git pull origin main
 
 ### Rolling Back
 
+Each run backs up only the files it replaced, keeping their relative paths.
+
 ```bash
 # List available backups
 ls -la ~/.claude.backup.*
+
+# See what a backup actually contains
+find ~/.claude.backup.20241023_143022 -type f
 
 # Restore from backup
 cp -r ~/.claude.backup.20241023_143022/* ~/.claude/

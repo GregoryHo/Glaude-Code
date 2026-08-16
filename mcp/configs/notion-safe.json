@@ -2,7 +2,7 @@
   "notion-safe": {
     "command": "node",
     "args": [
-      "${HOME}/GitHub/AI/Glaude-Code/mcp/notion-safe/src/notion-mcp-wrapper.js"
+      "${GLAUDE_ROOT}/mcp/notion-safe/src/notion-mcp-wrapper.js"
     ],
     "env": {
       "NOTION_TOKEN": "${NOTION_TOKEN}"

@@ -1,176 +1,124 @@
-# CRITICAL: Archon-First Task Management
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
-When ANY task management scenario arises:
-1. **Use Archon MCP server as PRIMARY task system** - Check and update Archon tasks first
-2. **TodoWrite is ONLY for granular subtask tracking** - Use after Archon setup for personal tracking
-3. **This overrides all other task management patterns** - No exceptions
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-**VIOLATION CHECK**: If you used TodoWrite before checking Archon, restart with Archon first.
+## 0. Language
 
-# Development Guidelines
+**Match the user's language per turn.**
 
-## Philosophy
+Respond in the language the user wrote in this turn. If they switch, switch with them. Code, identifiers, and technical terms stay in their original form regardless.
 
-### Core Beliefs
+## 1. Think Before Coding
 
-- **Incremental progress over big bangs** - Small changes that compile and pass tests
-- **Learning from existing code** - Study and plan before implementing
-- **Pragmatic over dogmatic** - Adapt to project reality
-- **Clear intent over clever code** - Be boring and obvious
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
 
-### Simplicity Means
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
 
-- Single responsibility per function/class
-- Avoid premature abstractions
-- No clever tricks - choose the boring solution
-- If you need to explain it, it's too complex
+## 2. Match the Codebase
 
-## Process
+**Study before writing. The project's existing answer beats your preferred one.**
 
-### 1. Planning & Staging
+Before adding anything new:
+- Find a similar feature and read how it was done. Follow that pattern.
+- Reuse the project's existing libraries and utilities. Don't add a dependency for something already solved in-tree.
+- Follow the existing test patterns - same framework, same structure, same naming.
+- Use the project's build system, test runner, formatter, and linter. Check `.editorconfig` and linter configs before formatting anything.
+- Don't introduce a new tool without saying why the existing one fails.
 
-Break complex work into 3-5 stages. Document in `IMPLEMENTATION_PLAN.md`:
+The rule: an unfamiliar reader should not be able to tell which code was yours.
 
-```markdown
-## Stage N: [Name]
-**Goal**: [Specific deliverable]
-**Success Criteria**: [Testable outcomes]
-**Tests**: [Specific test cases]
-**Status**: [Not Started|In Progress|Complete]
-**Archon Task ID**: [task-uuid if using Archon]
+## 3. Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+## 4. Fail Loudly
+
+**A silent failure is a bug you'll pay for later.**
+
+- Fail fast, with a message that names what was expected and what was found.
+- Include the context needed to debug it - the value, the path, the ID.
+- Handle errors at the level that can actually do something about them.
+- Never silently swallow an exception. An empty `catch` needs a written reason.
+
+## 5. Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+The test: Every changed line should trace directly to the user's request.
+
+## 6. Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+
+For multi-step tasks, state a brief plan:
 ```
-- Create corresponding Archon tasks for each stage when available
-- Update status as you progress
-- Remove file when all stages are done
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
+```
 
-### 2. Implementation Flow
+Work in increments that each land in a working state - compiles, tests pass, committable. Prefer several small commits over one large one.
 
-1. **Check Task** - If Archon available: `get_task(task_id)` → `update_task(status="doing")`
-2. **Research** - Use Archon RAG when available: `perform_rag_query()` + `search_code_examples()`
-3. **Understand** - Study existing patterns in codebase
-4. **Test** - Write test first (red)
-5. **Implement** - Minimal code to pass (green), based on research findings
-6. **Refactor** - Clean up with tests passing
-7. **Update Status** - If Archon: `update_task(status="review")` when complete
-8. **Commit** - With clear message linking to plan and task ID
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-### 3. Archon Research Integration
+## 7. Escalate When Stuck
 
-When Archon MCP is available, research before implementing:
+**Ask. Don't keep grinding.**
 
-- **Architecture & Patterns**: `perform_rag_query("[tech] patterns", match_count=5)`
-- **Implementation Examples**: `search_code_examples("[feature] implementation", match_count=3)`
-- **Debugging & Issues**: `perform_rag_query("[error message]", match_count=3)`
-- Keep queries focused with low match_count (3-5) for relevant results
+Keep working while each attempt is based on a new, testable hypothesis.
 
-### 4. When Stuck (After 3 Attempts)
+Stop the loop when:
+- The same error reappears after a fix.
+- Fixes for one failure break another.
+- The next attempt is just a variation on the last guess, not a new hypothesis.
+- Progress depends on missing context, unclear success criteria, or a product/design decision.
 
-**CRITICAL**: Maximum 3 attempts per issue, then STOP.
+When that happens:
+- State what's been tried, what failed, and your current hypothesis.
+- Explain the smallest useful next options, including any simpler approach.
+- Ask whether the success criterion is right, whether context is missing, or whether to change approach.
+- Do not keep making speculative changes while waiting for direction.
 
-1. **Document what failed**:
-   - What you tried
-   - Specific error messages
-   - Why you think it failed
+## Hard Rules
 
-2. **Research alternatives**:
-   - Find 2-3 similar implementations
-   - Note different approaches used
+**NEVER:**
+- Bypass commit hooks with `--no-verify`.
+- Disable, skip, or delete a test instead of fixing it.
+- Commit code that doesn't compile.
 
-3. **Question fundamentals**:
-   - Is this the right abstraction level?
-   - Can this be split into smaller problems?
-   - Is there a simpler approach entirely?
+**ALWAYS:** end text files with a newline.
 
-4. **Try different angle**:
-   - Different library/framework feature?
-   - Different architectural pattern?
-   - Remove abstraction instead of adding?
+## Tools
 
-## Technical Standards
+- Use Context7 for library, framework, and SDK documentation - your training data may be stale.
 
-### Architecture Principles
+---
 
-- **Composition over inheritance** - Use dependency injection
-- **Interfaces over singletons** - Enable testing and flexibility
-- **Explicit over implicit** - Clear data flow and dependencies
-- **Test-driven when possible** - Never disable tests, fix them
-
-### Code Quality
-
-- **Every commit must**:
-  - Compile successfully
-  - Pass all existing tests
-  - Include tests for new functionality
-  - Follow project formatting/linting
-
-- **Before committing**:
-  - Run formatters/linters
-  - Self-review changes
-  - Ensure commit message explains "why"
-
-### Error Handling
-
-- Fail fast with descriptive messages
-- Include context for debugging
-- Handle errors at appropriate level
-- Never silently swallow exceptions
-
-## Decision Framework
-
-When multiple valid approaches exist, choose based on:
-
-1. **Testability** - Can I easily test this?
-2. **Readability** - Will someone understand this in 6 months?
-3. **Consistency** - Does this match project patterns?
-4. **Simplicity** - Is this the simplest solution that works?
-5. **Reversibility** - How hard to change later?
-
-## Project Integration
-
-### Learning the Codebase
-
-- Find 3 similar features/components
-- Identify common patterns and conventions
-- Use same libraries/utilities when possible
-- Follow existing test patterns
-
-### Tooling
-
-- Use project's existing build system
-- Use project's test framework
-- Use project's formatter/linter settings
-- Don't introduce new tools without strong justification
-
-## Quality Gates
-
-### Definition of Done
-
-- [ ] Tests written and passing
-- [ ] Code follows project conventions
-- [ ] No linter/formatter warnings
-- [ ] Commit messages are clear
-- [ ] Implementation matches plan
-- [ ] No TODOs without issue numbers
-
-### Test Guidelines
-
-- Test behavior, not implementation
-- One assertion per test when possible
-- Clear test names describing scenario
-- Use existing test utilities/helpers
-- Tests should be deterministic
-
-## Important Reminders
-
-**NEVER**:
-- Use `--no-verify` to bypass commit hooks
-- Disable tests instead of fixing them
-- Commit code that doesn't compile
-- Make assumptions - verify with existing code
-
-**ALWAYS**:
-- Commit working code incrementally
-- Update plan documentation as you go
-- Learn from existing implementations
-- Stop after 3 failed attempts and reassess
-
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.

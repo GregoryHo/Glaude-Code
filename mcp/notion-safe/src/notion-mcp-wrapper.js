@@ -40,7 +40,7 @@ function loadEnvFile(envPath) {
 const projectRoot = path.join(__dirname, '../../../');
 const envLocations = [
   path.join(projectRoot, '.env'),           // 專案根目錄
-  path.join(__dirname, '../../.env'),       // mcp/notion 目錄
+  path.join(__dirname, '../../.env'),       // mcp/notion-safe 目錄
   path.join(__dirname, '../.env')           // src 上層目錄
 ];
 
@@ -78,7 +78,7 @@ class NotionMCPWrapper {
     
     // 嘗試找到 notion-mcp-server
     try {
-      // 首先嘗試 mcp/notion 目錄內的 node_modules
+      // 首先嘗試 mcp/notion-safe 目錄內的 node_modules
       const localMcpPath = path.join(__dirname, '../node_modules/.bin/notion-mcp-server');
       if (require('fs').existsSync(localMcpPath)) {
         mcpServerPath = localMcpPath;

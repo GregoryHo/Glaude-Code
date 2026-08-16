@@ -19,7 +19,7 @@
 ### 步驟 1：前置需求
 ```bash
 # 安裝依賴套件（包含官方 Notion MCP Server）
-cd mcp/notion
+cd mcp/notion-safe
 npm install
 ```
 
@@ -31,7 +31,7 @@ npm install
 ### 步驟 3：自動安裝
 ```bash
 # 進入專案目錄
-cd mcp/notion
+cd mcp/notion-safe
 
 # 執行安裝腳本
 ./scripts/setup-wrapper.sh
@@ -40,7 +40,7 @@ cd mcp/notion
 ### 步驟 4：手動安裝（如自動安裝失敗）
 ```bash
 # 1. 安裝依賴（如尚未安裝）
-cd mcp/notion
+cd mcp/notion-safe
 npm install
 
 # 2. 設定執行權限
@@ -75,12 +75,12 @@ ls node_modules/.bin/notion-mcp-server
 # ⚠️ 注意：工具名稱是 notion-safe 而非 notion
 
 # 4. 檢查操作日誌（Wrapper 獨有功能）
-ls -la mcp/notion/logs/
+ls -la mcp/notion-safe/logs/
 # ✅ 預期結果：看到 operations-YYYY-MM-DD.jsonl 檔案
 
 # 5. 測試日誌記錄
 # 執行任何 Notion 操作後：
-tail -f mcp/notion/logs/operations-$(date +%Y-%m-%d).jsonl
+tail -f mcp/notion-safe/logs/operations-$(date +%Y-%m-%d).jsonl
 # ✅ 預期結果：看到 JSON 格式的操作記錄
 ```
 
@@ -102,7 +102,7 @@ tail -f mcp/notion/logs/operations-$(date +%Y-%m-%d).jsonl
 npm install -g @notionhq/notion-mcp-server --registry https://registry.npmjs.org
 
 # 選項 B：本地安裝（推薦）
-cd mcp/notion
+cd mcp/notion-safe
 npm install @notionhq/notion-mcp-server
 ```
 
@@ -141,7 +141,7 @@ claude mcp list
 # ⚠️ 注意：工具名稱是 notion 而非 notion-safe
 
 # 3. 確認沒有日誌功能（官方版本限制）
-ls -la mcp/notion/logs/
+ls -la mcp/notion-safe/logs/
 # ❌ 預期結果：目錄不存在或沒有新的日誌檔案
 # ⚠️ 官方版本不提供操作日誌功能
 ```
@@ -247,7 +247,7 @@ npm config get prefix
 ```bash
 # 從官方切換到 Wrapper
 claude mcp remove notion
-cd mcp/notion && ./scripts/setup-wrapper.sh
+cd mcp/notion-safe && ./scripts/setup-wrapper.sh
 
 # 從 Wrapper 切換到官方
 claude mcp remove notion-safe
@@ -259,10 +259,10 @@ claude mcp add notion /usr/local/bin/notion-mcp-server \
 ### Q5: 日誌檔案在哪裡？
 ```bash
 # Wrapper 日誌位置
-ls -la mcp/notion/logs/
+ls -la mcp/notion-safe/logs/
 
 # 查看今天的操作
-cat mcp/notion/logs/operations-$(date +%Y-%m-%d).jsonl | jq '.'
+cat mcp/notion-safe/logs/operations-$(date +%Y-%m-%d).jsonl | jq '.'
 ```
 
 ## 🔧 進階設定

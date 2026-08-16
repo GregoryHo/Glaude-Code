@@ -27,7 +27,7 @@ Notion API
 ## 📁 專案結構
 
 ```
-mcp/notion/
+mcp/notion-safe/
 ├── README.md              # 本文件
 ├── .env.example           # 環境變數範本
 ├── docs/              
@@ -55,7 +55,7 @@ mcp/notion/
 ### 步驟 2：自動安裝（推薦）
 ```bash
 # 進入專案目錄
-cd mcp/notion
+cd mcp/notion-safe
 
 # 執行安裝腳本
 ./scripts/setup-wrapper.sh
@@ -70,7 +70,7 @@ cd mcp/notion
 ### 步驟 3：手動安裝（如需要）
 ```bash
 # 1. 安裝依賴（本地安裝）
-cd mcp/notion
+cd mcp/notion-safe
 npm install
 
 # 2. 設定執行權限

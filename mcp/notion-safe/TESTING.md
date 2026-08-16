@@ -18,7 +18,7 @@
 ### 1. 環境設置
 ```bash
 # 安裝依賴
-cd mcp/notion
+cd mcp/notion-safe
 npm install
 
 # 設定環境變數
@@ -111,7 +111,7 @@ checkRateLimit() {
 
 **測試目標**: 驗證所有操作都被正確記錄
 
-**日誌位置**: `mcp/notion/logs/operations-YYYY-MM-DD.jsonl`
+**日誌位置**: `mcp/notion-safe/logs/operations-YYYY-MM-DD.jsonl`
 
 **測試步驟**:
 1. 執行各種 Notion 操作
@@ -145,7 +145,7 @@ cat logs/operations-2025-08-31.jsonl | jq -r '.tool' | sort | uniq -c
 **測試目標**: 驗證 Wrapper 能正確找到 notion-mcp-server
 
 **支援的路徑優先順序**:
-1. 本地 node_modules：`mcp/notion/node_modules/.bin/notion-mcp-server`
+1. 本地 node_modules：`mcp/notion-safe/node_modules/.bin/notion-mcp-server`
 2. 專案 node_modules：`node_modules/.bin/notion-mcp-server`
 3. 全域安裝：`which notion-mcp-server`
 
@@ -160,17 +160,17 @@ Using local MCP server: node_modules/.bin/notion-mcp-server
 
 **測試目標**: 驗證多個 .env 檔案位置支援
 
-**支援的位置**:
-1. 專案根目錄：`/Users/gregho/Workspace/Personal/.env`
-2. mcp/notion 目錄：`/Users/gregho/Workspace/Personal/mcp/notion/.env`
-3. src 上層目錄：`/Users/gregho/Workspace/Personal/mcp/notion/src/../.env`
+**支援的位置**（相對於 repo 根目錄）:
+1. 專案根目錄：`./.env`
+2. wrapper 目錄：`./mcp/notion-safe/.env`
+3. src 上層目錄：`./mcp/notion-safe/src/../.env`
 
 **測試結果**:
 ```
-Loaded environment from: mcp/notion/.env
+Loaded environment from: mcp/notion-safe/.env
 ```
 
-✅ **驗證成功**: 成功從 mcp/notion/.env 載入環境變數
+✅ **驗證成功**: 成功從 mcp/notion-safe/.env 載入環境變數
 
 ## 整合測試
 
