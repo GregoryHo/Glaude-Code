@@ -155,14 +155,7 @@ if [[ "$INSTALL_MCP" =~ ^[Yy]$ ]]; then
         chmod +x mcp/install_mcp.py
         
         echo ""
-        echo -e "${GREEN}Available MCP Servers:${NC}"
-        echo "  • context7            - Documentation & code examples (recommended)"
-        echo "  • sequential-thinking - Multi-step problem solving"
-        echo "  • playwright          - Browser testing automation"
-        echo "  • serena              - Semantic code analysis"
-        echo "  • magic               - UI generation (requires API key)"
-        echo "  • morphllm-fast-apply - Code modifications (requires API key)"
-        echo "  • notion              - Notion integration (requires API key)"
+        python3 mcp/install_mcp.py list
         
         echo ""
         echo -e "${YELLOW}Enter server names to install (space-separated), or press Enter to skip:${NC}"

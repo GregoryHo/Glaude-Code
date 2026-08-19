@@ -6,6 +6,11 @@ yarn-error.log*
 package-lock.json
 yarn.lock
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
 # Logs
 logs/
 *.log

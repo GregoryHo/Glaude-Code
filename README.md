@@ -30,7 +30,6 @@ Glaude-Code/
 │   ├── obsidian/        # Obsidian knowledge management
 │   └── excalidraw/      # Diagram generation
 ├── agents/              # Custom AI agents
-├── templates/           # Reusable templates
 └── install.sh           # Main deployment script
 ```
 
@@ -42,7 +41,7 @@ Glaude-Code/
 
 ```bash
 # Clone this repository
-git clone https://github.com/yourusername/Glaude-Code.git
+git clone https://github.com/GregoryHo/Glaude-Code.git
 cd Glaude-Code
 
 # Run the installation script
@@ -236,22 +235,10 @@ npm install
 node mermaid-to-excalidraw.js flowchart.mmd flowchart.excalidraw
 
 # Use templates
-cp templates/architecture.json my-diagram.excalidraw
+cp integrations/excalidraw/templates/architecture.json my-diagram.excalidraw
 ```
 
 See [integrations/excalidraw/README.md](integrations/excalidraw/README.md) for details.
-
----
-
-## 📚 Templates
-
-Pre-configured templates for common tasks:
-- **PRD**: Product Requirements Documents
-- **ADR**: Architecture Decision Records
-- **Reviews**: Performance review templates
-- **Sprint Planning**: Sprint planning documents
-
-Located in `templates/` directory.
 
 ---
 
@@ -398,7 +385,6 @@ MIT License - See [LICENSE](LICENSE) file for details.
 
 - [Claude Code](https://claude.ai/code) - Official Claude Code interface
 - [Model Context Protocol](https://modelcontextprotocol.io/) - MCP specification
-- [Agent Factory](research/agent-factory/) - Pydantic AI agent builder framework
 
 ---
 

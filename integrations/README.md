@@ -75,5 +75,4 @@ To add a new integration:
 ## See Also
 
 - [MCP Servers](../mcp/) - Model Context Protocol integrations
-- [Templates](../templates/) - Reusable workflow templates
 - [Core Configuration](../core/) - Global Claude Code settings

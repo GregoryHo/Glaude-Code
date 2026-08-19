@@ -334,14 +334,14 @@ Error: Rate limit exceeded: 100/100 operations in the last hour
 # Check if official MCP server is installed
 npm list -g @notionhq/notion-mcp-server
 
-# Test wrapper directly
-node ~/GitHub/AI/Glaude-Code/mcp/notion-safe/src/notion-mcp-wrapper.js
+# Test wrapper directly (from the repo root)
+node mcp/notion-safe/src/notion-mcp-wrapper.js
 ```
 
 **Solutions**:
 ```bash
-# Install missing dependency
-cd ~/GitHub/AI/Glaude-Code/mcp/notion-safe
+# Install missing dependency (from the repo root)
+cd mcp/notion-safe
 npm install
 
 # Reinstall official server

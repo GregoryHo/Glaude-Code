@@ -46,7 +46,14 @@ python3 install_mcp.py remove magic
 - **serena** ✓ - Semantic code analysis and intelligent editing
 
 ### 🧪 Testing
-- **playwright** ✓ - Browser E2E testing and automation
+- **playwright** ✓ - Cross-browser E2E testing and automation
+- **selenium** ✓ - Cross-browser web automation with Selenium WebDriver
+
+### 🌐 Browser Automation
+- **chrome-devtools** ✓ - Chrome DevTools Protocol for debugging and performance analysis
+
+### 🧭 Knowledge Management
+- **archon** ✓ - AI-powered knowledge base and task management platform
 
 ### 🎨 UI Generation
 - **magic** 🔑 - Modern UI component generation (needs TWENTYFIRST_API_KEY)
@@ -81,15 +88,18 @@ python3 install_mcp.py install context7 serena playwright sequential-thinking
 
 ```
 mcp/
-├── configs/             # Individual MCP server configurations
+├── configs/             # One file per server; filename matches the server name
+│   ├── archon.json
+│   ├── chrome-devtools.json
 │   ├── context7.json
-│   ├── sequential.json
 │   ├── magic.json
-│   ├── playwright.json
-│   ├── serena.json
-│   ├── morphllm.json
+│   ├── morphllm-fast-apply.json
 │   ├── notion.json
-│   └── notion-safe.json
+│   ├── notion-safe.json
+│   ├── playwright.json
+│   ├── selenium.json
+│   ├── sequential-thinking.json
+│   └── serena.json
 ├── MCP_*.md            # Detailed documentation for each server
 ├── install_mcp.py      # Installation and management script
 └── notion-safe/        # Custom Notion wrapper with rate limiting
