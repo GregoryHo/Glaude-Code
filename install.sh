@@ -104,6 +104,13 @@ if [ -d "core/rules" ] || [ -d "core/output-styles" ]; then
     deploy_dir "core/output-styles" "$HOME/.claude/output-styles"
 fi
 
+# Deploy hook scripts referenced by settings.json
+if [ -d "core/hooks" ]; then
+    echo -e "${GREEN}🪝 Deploying hooks...${NC}"
+    deploy_dir "core/hooks" "$HOME/.claude/hooks"
+    chmod +x "$HOME/.claude/hooks/"*.sh 2>/dev/null || true
+fi
+
 # Deploy agents if directory exists
 if [ -d "agents" ] && [ "$(ls -A agents)" ]; then
     echo -e "${GREEN}🤖 Deploying custom agents...${NC}"

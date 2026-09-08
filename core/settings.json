@@ -97,6 +97,17 @@
           }
         ]
       }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/zhtw-gate.sh"
+          }
+        ]
+      }
     ]
   },
   "worktree": {

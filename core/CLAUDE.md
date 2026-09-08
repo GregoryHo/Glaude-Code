@@ -118,6 +118,7 @@ When that happens:
 ## Tools
 
 - Use Context7 for library, framework, and SDK documentation - your training data may be stale.
+- Traditional Chinese written to `.md`/`.txt` is gated by zhtw-mcp on write. When the gate reports errors, fix them with the `zhtw` MCP tool (`fix_mode: lexical_safe`). Do not pre-emptively lint text the gate has not flagged.
 
 ---
 
