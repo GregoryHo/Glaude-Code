@@ -125,7 +125,9 @@
     "skill-creator@claude-plugins-official": true,
     "swift-lsp@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": true,
-    "codex@openai-codex": true
+    "codex@openai-codex": true,
+    "eli5@claude-community": true,
+    "typesafe@typesafe-ai": true
   },
   "extraKnownMarketplaces": {
     "obsidian-skills": {
@@ -144,6 +146,18 @@
       "source": {
         "source": "github",
         "repo": "nextlevelbuilder/ui-ux-pro-max-skill"
+      }
+    },
+    "claude-community": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-plugins-community"
+      }
+    },
+    "typesafe-ai": {
+      "source": {
+        "source": "github",
+        "repo": "typesafe-ai/skills"
       }
     }
   },
