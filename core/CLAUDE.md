@@ -123,3 +123,18 @@ When that happens:
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## Retrieval routing
+
+Use scoped `rg` for known identifiers, literals, and paths; `ast-grep` for syntax and codemods; read code for simple comprehension; and project-native tests/type-check/lint after edits. This is task-dependent routing, not a mandatory sequence.
+
+Semantic mgrep indexing is disabled by default. Use it only after explicit repository approval for remote indexing/data handling. Do not enable mgrep MCP automatically.
+
+Semgrep stays local: no Cloud login, MCP registration, or `--config auto` without explicit authorization. Run it with an explicit approved local rule and `--oss-only --metrics off`, set `SEMGREP_ENABLE_VERSION_CHECK=0`, and give logs/settings/temp files a dedicated writable scratch directory. On macOS, if TLS verification fails, set `SSL_CERT_FILE=/etc/ssl/cert.pem`. Never disable TLS verification or relax source permissions to make scanning work.
+
+## LSP navigation
+
+- If the session exposes LSP tools (an MCP server or a built-in `LSP` tool), check for them before declaring LSP unavailable. Deferred tools must be loaded first.
+- For definitions, references, and types: locate the candidate with scoped `rg` or structural search, then use the LSP tool's definition/references/hover operations. Read the tool's description for its coordinate convention; it varies by server.
+- Empty or partial results do not prove absence, especially in monorepos. Say so, and fall back to scoped lexical search plus project-native verification.
+- LSP tools are for read-only retrieval. Make edits with the normal editor tools.
