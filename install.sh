@@ -29,6 +29,7 @@ BACKUP_DIR=~/.claude.backup.$(date +%Y%m%d_%H%M%S)
 backup_file() {
     local target="$1"
     local rel="${target#$HOME/.claude/}"
+    [ "$rel" = "$target" ] && rel="${target#$HOME/}"
     mkdir -p "$BACKUP_DIR/$(dirname "$rel")"
     cp "$target" "$BACKUP_DIR/$rel"
     echo "   📦 backed up to $BACKUP_DIR/$rel"
@@ -39,6 +40,7 @@ deploy_file() {
     local src="$1"
     local dest="$2"
     local name="${dest#$HOME/.claude/}"
+    [ "$name" = "$dest" ] && name="~/${dest#$HOME/}"
 
     [ -f "$src" ] || return 0
 
@@ -109,6 +111,12 @@ if [ -d "core/hooks" ]; then
     echo -e "${GREEN}🪝 Deploying hooks...${NC}"
     deploy_dir "core/hooks" "$HOME/.claude/hooks"
     chmod +x "$HOME/.claude/hooks/"*.sh 2>/dev/null || true
+fi
+
+# Codex reads the same guidelines from AGENTS.md; skip unless Codex is set up
+if [ -d "$HOME/.codex" ]; then
+    echo -e "${GREEN}🧭 Deploying Codex AGENTS.md...${NC}"
+    deploy_file "core/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
 fi
 
 # Deploy agents if directory exists

@@ -21,7 +21,8 @@ Glaude-Code/
 │   ├── CLAUDE.md        # Global Claude instructions
 │   ├── settings.json    # Claude settings
 │   ├── rules/           # Always-loaded rule files
-│   └── output-styles/   # Output style definitions
+│   ├── output-styles/   # Output style definitions
+│   └── codex/AGENTS.md  # Codex counterpart of CLAUDE.md
 ├── mcp/                 # MCP service configurations
 │   ├── configs/         # Individual JSON config files
 │   ├── MCP_*.md         # Documentation for each service
@@ -51,6 +52,8 @@ cd Glaude-Code
 This will:
 - Deploy `core/CLAUDE.md`, `core/settings.json`, `core/rules/` and
   `core/output-styles/` to `~/.claude/`
+- Deploy `core/codex/AGENTS.md` to `~/.codex/AGENTS.md`, only if `~/.codex/`
+  already exists
 - Show a diff and ask before overwriting any file you already have —
   nothing is replaced silently, so your own settings survive by default
 - Back up only the files it actually replaces, to `~/.claude.backup.{timestamp}/`
