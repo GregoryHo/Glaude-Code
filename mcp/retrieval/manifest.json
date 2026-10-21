@@ -1,0 +1,5 @@
+{
+  "version": "0.2.0",
+  "bridge_repository": "https://github.com/GregoryHo/mcp-language-server.git",
+  "bridge_commit": "69d8aaa8c9ddb1301dcffef7f1677f205167b3e1"
+}

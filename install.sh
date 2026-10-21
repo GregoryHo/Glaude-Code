@@ -195,6 +195,38 @@ else
     echo "   ℹ️  You can configure servers later with: python3 mcp/install_mcp.py"
 fi
 
+# Local retrieval LSPs have their own build and machine-local server map.
+echo ""
+echo "Set up local retrieval LSPs for Claude Code / Codex? (y/N)"
+read -r INSTALL_RETRIEVAL
+if [[ "$INSTALL_RETRIEVAL" =~ ^[Yy]$ ]]; then
+    RETRIEVAL_PYTHON="${GLAUDE_PYTHON:-python3}"
+    if ! "$RETRIEVAL_PYTHON" -c 'import sys; sys.exit(sys.version_info < (3, 11))' 2>/dev/null; then
+        echo "Python 3.11+ is required. Install with: brew install python"
+        echo "Then run: python3 mcp/retrieval/installer.py doctor"
+        exit 2
+    fi
+    if ! "$RETRIEVAL_PYTHON" mcp/retrieval/installer.py doctor; then
+        echo "Doctor reports missing installation/dependencies; review the commands above."
+    fi
+    echo "Languages (comma-separated; Enter = detected; all = all six):"
+    echo "typescript (= JS/TS), python, rust, go, kotlin, swift"
+    read -r RETRIEVAL_LANGUAGES
+    RETRIEVAL_ARGS=()
+    if [ -n "$RETRIEVAL_LANGUAGES" ]; then
+        RETRIEVAL_ARGS+=(--languages "$RETRIEVAL_LANGUAGES")
+    fi
+    echo "Install missing language/build dependencies? (y/N)"
+    read -r RETRIEVAL_DEPENDENCIES
+    if [[ "$RETRIEVAL_DEPENDENCIES" =~ ^[Yy]$ ]]; then
+        RETRIEVAL_ARGS+=(--install-missing)
+    fi
+    "$RETRIEVAL_PYTHON" mcp/retrieval/installer.py install "${RETRIEVAL_ARGS[@]}"
+    echo "Host: claude, codex, or both (Enter = both):"
+    read -r RETRIEVAL_HOST
+    "$RETRIEVAL_PYTHON" mcp/retrieval/installer.py configure --host "${RETRIEVAL_HOST:-both}"
+fi
+
 # Final summary
 echo ""
 echo -e "${GREEN}✅ Installation Complete!${NC}"

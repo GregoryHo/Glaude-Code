@@ -1,5 +1,9 @@
 # Glaude-Code Configuration Framework
 
+Personal retrieval workflow **0.2.0**: see [macOS LSP setup](mcp/retrieval/README.md)
+and [changelog](CHANGELOG.md). Cloning copies instructions; the optional
+`doctor → install → configure` flow installs the local LSP dependencies.
+
 A personalized Claude Code configuration framework for enhanced productivity and workflow optimization.
 
 ## 🎯 Purpose

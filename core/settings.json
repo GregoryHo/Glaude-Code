@@ -119,7 +119,7 @@
     "context7@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": false,
     "kotlin-lsp@claude-plugins-official": false,
-    "mgrep@Mixedbread-Grep": true,
+    "mgrep@Mixedbread-Grep": false,
     "pyright-lsp@claude-plugins-official": false,
     "rust-analyzer-lsp@claude-plugins-official": false,
     "skill-creator@claude-plugins-official": true,
