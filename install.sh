@@ -117,6 +117,25 @@ fi
 if [ -d "$HOME/.codex" ]; then
     echo -e "${GREEN}🧭 Deploying Codex AGENTS.md...${NC}"
     deploy_file "core/codex/AGENTS.md" "$HOME/.codex/AGENTS.md"
+
+    # config.toml holds machine-local trust and notify entries, so only add
+    # the auto-compact threshold and leave an existing value alone.
+    CODEX_CONFIG="$HOME/.codex/config.toml"
+    CODEX_COMPACT_LINE="model_auto_compact_token_limit = 400000"
+    if [ -f "$CODEX_CONFIG" ] && grep -Eq '^[[:space:]]*model_auto_compact_token_limit[[:space:]]*=' "$CODEX_CONFIG"; then
+        echo "   = ~/.codex/config.toml already sets model_auto_compact_token_limit, kept"
+    elif [ -f "$CODEX_CONFIG" ]; then
+        backup_file "$CODEX_CONFIG"
+        # Top-level keys must precede the first [table], so prepend
+        CODEX_CONFIG_TMP=$(mktemp)
+        { echo "$CODEX_COMPACT_LINE"; cat "$CODEX_CONFIG"; } > "$CODEX_CONFIG_TMP"
+        cat "$CODEX_CONFIG_TMP" > "$CODEX_CONFIG"
+        rm -f "$CODEX_CONFIG_TMP"
+        echo "   ✓ ~/.codex/config.toml: added $CODEX_COMPACT_LINE"
+    else
+        echo "$CODEX_COMPACT_LINE" > "$CODEX_CONFIG"
+        echo "   ✓ ~/.codex/config.toml created with $CODEX_COMPACT_LINE"
+    fi
 fi
 
 # Deploy agents if directory exists
