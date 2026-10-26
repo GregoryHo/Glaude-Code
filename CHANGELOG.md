@@ -4,6 +4,13 @@ Personal development versions. Record future changes under Unreleased.
 
 ## Unreleased
 
+- Auto-compact at about 400K tokens. The settings template computes it as
+  40% of a 1M window, which assumes a 1M-context model; on a 200K model it
+  fires near 80K. `install.sh` adds `model_auto_compact_token_limit = 400000`
+  to `~/.codex/config.toml` unless the key is already set, leaving the rest
+  of that file untouched. Codex ignores values above 90% of the model's
+  window.
+
 ## 0.2.0 — 2026-10-21
 
 - Share explicit question-dependent retrieval routing across Claude and Codex,
