@@ -5,17 +5,20 @@
     "CLAUDE_CODE_AUTO_COMPACT_WINDOW": "1000000",
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "40"
   },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
+  },
   "includeCoAuthoredBy": false,
   "permissions": {
     "allow": [
       "Read",
-      "Write",
-      "Edit",
       "Glob",
       "Grep",
-      "Bash",
-      "WebFetch",
-      "WebSearch"
+      "LS",
+      "WebSearch",
+      "TodoWrite"
     ],
     "deny": [
       "Bash(sudo rm -rf /*)",
@@ -46,6 +49,17 @@
           {
             "type": "command",
             "command": "mkdir -p ~/.claude/cc-tower && sid=\"$(sed -n 's/.*\"session_id\"[[:space:]]*:[[:space:]]*\"\\([^\"]*\\)\".*/\\1/p' | head -1 | tr -cd 'A-Za-z0-9._-')\" && printf '{\"event\":\"SessionEnd\",\"session_id\":\"%s\",\"ts\":\"%s\"}\\n' \"$sid\" \"$(date -u +%Y-%m-%dT%H:%M:%SZ)\" >> ~/.claude/cc-tower/events.jsonl"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/hooks/zhtw-gate.sh"
           }
         ]
       }
@@ -99,24 +113,13 @@
           }
         ]
       }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Write|Edit",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/hooks/zhtw-gate.sh"
-          }
-        ]
-      }
     ]
   },
   "worktree": {
     "baseRef": "fresh"
   },
   "enabledPlugins": {
-    "arcforge@arcforge-dev": false,
+    "arcforge@arcforge-dev": true,
     "commit-commands@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
     "gopls-lsp@claude-plugins-official": false,
@@ -129,7 +132,9 @@
     "typescript-lsp@claude-plugins-official": true,
     "codex@openai-codex": true,
     "eli5@claude-community": true,
-    "typesafe@typesafe-ai": true
+    "typesafe@typesafe-ai": true,
+    "next-steps@claude-community": true,
+    "html-plan@claude-community": true
   },
   "extraKnownMarketplaces": {
     "obsidian-skills": {
@@ -161,12 +166,24 @@
         "source": "github",
         "repo": "typesafe-ai/skills"
       }
+    },
+    "claude-for-financial-services": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/financial-services"
+      }
     }
   },
-  "effortLevel": "xhigh",
   "outputStyle": "ADHD",
-  "advisorModel": "opus",
+  "effortLevel": "xhigh",
+  "modelSettings": {
+    "claude-fable-5-1": {
+      "effortLevel": "xhigh"
+    }
+  },
+  "advisorModel": "fable",
   "tui": "fullscreen",
+  "timeFormat": "24-hour",
   "autoMemoryEnabled": false,
   "autoDreamEnabled": false,
   "skipDangerousModePermissionPrompt": true,
@@ -179,5 +196,26 @@
   "agentPushNotifEnabled": true,
   "skipAutoPermissionPrompt": true,
   "useAutoModeDuringPlan": true,
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Local dev/test/build commands for the repo in the working directory: pnpm/npm scripts declared in that repo's package.json (dev, build, lint, typecheck, test, test:run), tsc --noEmit, vitest run, next build — including runs started in the background.",
+      "Requests to a local dev server: curl/wget against http://localhost:* or http://127.0.0.1:*.",
+      "Read-only git and gh inspection: git status|diff|log|show|branch|remote -v, gh pr view|list|checks|diff.",
+      "Reading and writing files inside the working directory's repo, EXCEPT the sensitive paths named in the environment section (.env* other than .env.example, credential and key files)."
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Production deploys and promotions: vercel --prod, vercel deploy --prod, vercel promote, or any deploy/apply command targeting a host, namespace, or environment named prod/production.",
+      "History-rewriting or branch-destroying git operations: push --force / --force-with-lease, any push to main or another protected branch, reset --hard, clean -fdx, branch -D, tag deletion.",
+      "Recursive or wildcard deletion outside the session scratchpad: rm -rf, find ... -delete, git worktree remove --force.",
+      "Writes outside the working directory's repo — ~/.claude, ~/.config, shell rc files, or any path in another project — and any edit to permissions.deny, autoMode.hard_deny, or hook definitions that widens what is permitted, unless the user asked for that specific file or change by name."
+    ],
+    "hard_deny": [
+      "$defaults",
+      "Sending the contents of .env* (except .env.example), credential, token, or key files off this machine by any route — request body or URL, pastebin/gist, commit contents, chat message, or third-party API — regardless of stated intent.",
+      "Committing, staging, or pushing any file matching .env* (except .env.example), or any file containing an API key, access token, or private key."
+    ]
+  },
   "voiceEnabled": true
 }

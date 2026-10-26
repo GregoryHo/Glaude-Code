@@ -10,6 +10,12 @@ Personal development versions. Record future changes under Unreleased.
   to `~/.codex/config.toml` unless the key is already set, leaving the rest
   of that file untouched. Codex ignores values above 90% of the model's
   window.
+- Sync the settings template back from the live config: attribution off,
+  `fable` advisor, per-model effort, 24-hour time, auto-mode allow and deny
+  rules, and two community plugins. Drop `Write`, `Edit`, `Bash` and
+  `WebFetch` from the allow list. Machine-local entries stay out: LSP
+  permissions (written by the retrieval installer), the auto-mode
+  environment, directory marketplaces and the status line.
 
 ## 0.2.0 — 2026-10-21
 
